@@ -44,7 +44,7 @@ The project follows this end-to-end workflow:
 
 ## Project Documentation
 
-The documentation is organised into stages so readers can follow the project from its initial database design through warehouse implementation.
+The documentation is organised into stages so readers can follow the project from its initial database design through warehouse implementation and analytical validation.
 
 | No. | Documentation | Description |
 |---|---|---|
@@ -53,8 +53,11 @@ The documentation is organised into stages so readers can follow the project fro
 | 03 | [Data Quality Audit](docs/03-data-quality-audit.md) | SQL-based data-quality checks and audit findings. |
 | 04 | [Data Cleaning and Remediation](docs/04-data-cleaning-and-remediation.md) | Investigation, root-cause assessment, and remediation decisions. |
 | 05 | [Data Warehouse Architecture](docs/05-data-warehouse-architecture.md) | Warehouse architecture, dimensions, facts, and relationships. |
-
-*Further documentation will be added as the remaining implementation stages are documented.*
+| 06 | [Dimensional Modeling](docs/06-dimensional-modeling.md) | Dimensional model, fact-table grain, and dimension design. |
+| 07 | [ETL Pipeline](docs/07-etl-pipeline.md) | SQL-based extraction, transformation, and loading process. |
+| 08 | [Data Validation](docs/08-data-validation.md) | Fact, dimension, SCD Type 2, and referential-integrity validation. |
+| 09 | [Analytical Validation](docs/09-analytical-validation.md) | SQL-based monthly, product, store, and category sales validation. |
+| 10 | [Conclusion and Recommendations](docs/10-conclusion-and-recommendations.md) | Overall project findings, limitations, and recommendations. |
 
 ## Key Implementation Highlights
 
@@ -65,7 +68,29 @@ The documentation is organised into stages so readers can follow the project fro
 - A shared calendar dimension.
 - SQL-based ETL transformations.
 - Fact and dimension validation.
-- SQL analytical validation.
+- SQL analytical validation across monthly revenue, product sales, store sales, and category sales.
+
+## Data Warehouse Validation Results
+
+The warehouse validation checks passed within the scope of the tests performed.
+
+The three fact tables contained the expected records:
+
+| Fact table | Validated records |
+|---|---:|
+| fact_sales | 50 |
+| fact_payment | 31 |
+| fact_product_pricehistory | 18 |
+
+The four analytical validations also passed, with each aggregation reconciling to the validated FactSales total of **₦302,918.00**.
+
+### Documented Limitation
+
+One warehouse exception, DQ-PH-01, remains documented.
+
+Three product price-history records predate the `dim_product` baseline of 1 June 2025. Their product surrogate keys remain `NULL` because no valid historical dimension versions were available for the temporal lookup.
+
+The original source records and dates were preserved rather than inventing historical dimension versions.
 
 ## Project Scope
 
@@ -73,7 +98,9 @@ This repository focuses on Data Engineering.
 
 The main deliverables are database design, data-quality investigation, dimensional modelling, ETL implementation, and warehouse validation.
 
-Analytical SQL queries are included as a way to demonstrate that the warehouse supports consistent business queries. Dashboard development and BI reporting are outside the project's scope.
+Analytical SQL queries are included as a way to demonstrate that the warehouse supports consistent business queries.
+
+Dashboard development and BI reporting are outside the project's scope.
 
 ## Repository Structure
 
@@ -82,16 +109,33 @@ NovaMart-Data-Warehouse/
 │
 ├── README.md
 │
-└── docs/
-    ├── 01-project-overview.md
-    ├── 02-oltp-database-design.md
-    ├── 03-data-quality-audit.md
-    ├── 04-data-cleaning-and-remediation.md
-    └── 05-data-warehouse-architecture.md
+├── docs/
+│   ├── 01-project-overview.md
+│   ├── 02-oltp-database-design.md
+│   ├── 03-data-quality-audit.md
+│   ├── 04-data-cleaning-and-remediation.md
+│   ├── 05-data-warehouse-architecture.md
+│   ├── 06-dimensional-modeling.md
+│   ├── 07-etl-pipeline.md
+│   ├── 08-data-validation.md
+│   ├── 09-analytical-validation.md
+│   └── 10-conclusion-and-recommendations.md
+│
+├── sql/
+│   ├── oltp/
+│   ├── audits/
+│   ├── transformations/
+│   ├── dimensions/
+│   ├── facts/
+│   └── validation/
+│
+└── screenshots/
 ```
 
 ## Project Status
 
-<badge>In Progress</badge>
+**Core project implementation and validation completed.**
 
-The project documentation and implementation evidence are being organised stage by stage. Additional SQL scripts, diagrams, ETL documentation, and validation evidence will be added as the repository develops.</textarea>
+The OLTP audit, warehouse design, SQL-based ETL, warehouse validation, and four analytical validation exercises have been documented.
+
+The outstanding OLTP findings and the DQ-PH-01 warehouse limitation remain explicitly documented for transparency.
